@@ -24,6 +24,37 @@ const upload = multer({
   }
 });
 
+const userSchema = new mongoose.Schema({
+  name: String,
+  color: String,
+});
+
+const User = mongoose.model("User", userSchema);
+
+app.post('/api/users', async (req, res) => {
+  const user = new User({
+    name: req.body.name,
+    color: req.body.color,
+  });
+  try {
+    await user.save();
+    res.send(user);
+  } catch (error) {
+    console.log(error);
+    res.sendStatus(500);
+  }
+});
+
+app.get('/api/users', async (req, res) => {
+  try {
+    let users = await User.find();
+    res.send(users);
+  } catch (error) {
+    console.log(error);
+    res.sendStatus(500);
+  }
+})
+
 const itemSchema = new mongoose.Schema({
   title: String,
   paragraphs: [String],
@@ -77,6 +108,35 @@ app.get('/api/items', async (req, res) => {
     console.log(error);
     res.sendStatus(500);
   }
-})
+});
+
+app.delete('/api/items/:id', async (req, res) => {
+  try {
+    await Item.deleteOne({
+      _id: req.params.id,
+    });
+    res.sendStatus(200);
+  } catch (err) {
+    console.log(err);
+    res.sendStatus(500);
+  }
+});
+
+app.put('/api/items/:id', async (req, res) => {
+  try {
+    let item = await Item.findOne({
+      _id: req.params.id,
+    })
+    item.title = req.body.title;
+    item.paragraphs = req.body.paragraphs;
+    item.date = req.body.date;
+    item.time = req.body.time;
+    await item.save();
+    res.sendStatus(200);
+  } catch (err) {
+    console.log(err);
+    res.sendStatus(500);
+  }
+});
 
 app.listen(3001, () => console.log('Server listening on port 3001!'));

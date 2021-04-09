@@ -6,6 +6,11 @@
       <router-link to="/editPost">Edit Posts</router-link>
     </div>
     <router-view/>
+    <div class ="footer">
+    <a href="https://github.com/jahali25/blogDatabase" target="_blank">
+      <img src="/images/GitHub-Mark-120px-plus.png">
+    </a>
+  </div>
   </div>
 </template>
 
