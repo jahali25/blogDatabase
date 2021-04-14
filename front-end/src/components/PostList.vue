@@ -1,15 +1,9 @@
 <template>
 <div class="postList">
-    <!-- <div id="users">
-        <button :style="{backgroundColor: user.color}"
-        :class="{ white: darkColor(user.color), selected: active(user)}"
-        v-for="user in users" :key=user.id
-        @click=selectUser(user)>{{user.name}}</button>
-    </div> -->
     <UsersDisplay />
     <div class="posts" v-if="!foundItem">
         <div class="post" v-for="post in posts" :key="post.id" @click="selectPost(post)">
-            <div class="info">
+            <div class="info" :style="{color: post.user.color}">
                 <h2>{{post.title}}</h2>
                 <p>Posted on {{post.date}}, at {{post.time}} by
                 {{post.user.name}}</p>
@@ -18,12 +12,12 @@
     </div>
     <div class="singlePost" v-else>
         <div class="postInfo" @click="deselectPost">
-            <h2>{{foundItem.title}}</h2>
+            <h2 :style="{color: foundItem.user.color}">{{foundItem.title}}</h2>
             <img :src="foundItem.path"/>
             <div class="postBody" v-for="para in foundItem.paragraphs" :key="para">
                 <p>{{para}}</p>
             </div>
-            <p>Posted on {{foundItem.date}}, at {{foundItem.time}} by
+            <p :style="{color: foundItem.user.color}">Posted on {{foundItem.date}}, at {{foundItem.time}} by
             {{foundItem.user.name}}</p>
         </div>
     </div>

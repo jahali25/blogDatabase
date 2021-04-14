@@ -100,7 +100,7 @@ export default {
 #users .selected {
 
     font-size: 1.3em;
-    padding: 5px;
+    padding: 10px;
 }
 
 .white .selected {
