@@ -1,17 +1,14 @@
 <template>
 <div class="addPage">
     <h1>Blog Post</h1>
-    <div id="users">
-        <button :style="{backgroundColor: user.color}"
-        :class="{ white: darkColor(user.color), selected: active(user)}"
-        v-for="user in users" :key=user.id
-        @click=selectUser(user)>{{user.name}}</button>
-    </div>
+    <UsersDisplay />
     <p>This is the page to add blog posts and new users.</p>
     <div class="addUser">
         <form @submit.prevent="addUser">
           <input type="text" v-model="userName">
-          <swatchPicker v-model="color"/>
+          <div class="swatchWrapper">
+            <swatchPicker v-model="color"/>
+          </div>
           <button type="submit">Add a User</button>
         </form>
     </div>
@@ -41,7 +38,8 @@
 
 <script>
     import axios from 'axios';
-    import { Swatches } from 'vue-color'
+    import { Swatches } from 'vue-color';
+    import UsersDisplay from '@/components/UsersDisplay.vue';
     export default {
         name: 'AddPost',
         data() {
@@ -56,14 +54,16 @@
                 color: "#000",
                 beenPosted: false,
                 users: [],
-                user: null,
             }
         },
         components: {
             'swatchPicker': Swatches,
+            UsersDisplay,
         },
         computed: {
-
+            currentUser() {
+                return this.$root.$data.user;
+            }
         },
         created() {
             this.getUsers();
@@ -89,16 +89,14 @@
                   console.log(error);
               }
             },
-            active(user) {
-              return (this.user && user._id === this.user._id);
-            },
             async upload() {
                 try {
                     const formData = new FormData();
                     formData.append('photo', this.file, this.file.name);
                     let r1 = await axios.post('/api/photos', formData);
                     console.log("Made past photot");
-                    await axios.post('/api/items', {
+                    const id = this.currentUser._id;
+                    await axios.post('/api/users/' + id + '/items', {
                         title: this.title,
                         paragraphs: [this.post],
                         date: this.date,
@@ -116,12 +114,17 @@
                 }
             },
             async addUser() {
+                if (this.userName === '') {
+                    return;
+                }
                 try {
-                    await axios.post('/api/users', {
+                    let response = await axios.post('/api/users', {
                         name: this.userName,
                         color: this.color.hex,
                     });
-                    await this.getUsers();
+                    this.$root.$data.user = response.data;
+                    this.userName = '';
+                    this.getUsers();
                 } catch (error) {
                     console.log(error);
                 }
@@ -130,50 +133,12 @@
                 try {
                   const response = await axios.get('/api/users');
                   this.users = response.data;
-                  if (!this.user && this.users.length > 0) {
-                    this.user = this.users[0];
+                  if (!this.currentUser && this.users.length > 0) {
+                    this.$root.$data.user = this.users[0];
                   }
                 } catch (error) {
                     console.log(error);
                 }
-            },
-            selectUser(user) {
-                this.user = user;
-                this.getUsers();
-            },
-            darkColor(color) {
-              return (this.lightOrDark(color) === 'dark');
-            },
-
-            lightOrDark(color) {
-              let hex = color;
-              if (typeof color === 'object' && color !== null)
-                hex = color.hex;
-
-                // Convert it to RGB: http://gist.github.com/983661
-              let rgb = +("0x" + hex.slice(1).replace(
-              hex.length < 5 && /./g, '$&$&'));
-
-              const r = rgb >> 16;
-              const g = rgb >> 8 & 255;
-              const b = rgb & 255;
-
-              // HSP (Highly Sensitive Poo) equation from http://alienryderflex.com/hsp.html
-              const hsp = Math.sqrt(
-              0.299 * (r * r) +
-              0.587 * (g * g) +
-              0.114 * (b * b)
-              );
-
-              // Using the HSP value, determine whether the color is light or dark
-              if (hsp>127.5) {
-
-                  return 'light';
-              }
-              else {
-
-                  return 'dark';
-              }
             },
         },
 
@@ -199,6 +164,11 @@ form {
   margin-bottom: 20px;
 }
 
+.swatchWrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
 .white {
   color: #fff;
 }

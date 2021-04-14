@@ -1,5 +1,6 @@
 <template>
 <div class="editor">
+  <UsersDisplay />
   <div class="find">
     <div class="form">
       <input v-model="findTitle" placeholder="Search">
@@ -28,21 +29,27 @@
 
 <script>
 import axios from 'axios';
+import UsersDisplay from '@/components/UsersDisplay.vue';
 export default {
   name: "EditPost",
+  components: {
+    UsersDisplay,
+  },
   data() {
           return {
               findTitle: "",
               posts: [],
               findItem: null,
               users: [],
-              currentUser: null,
           }
   },
   computed: {
     suggestions() {
       let items = this.posts.filter(item => item.title.toLowerCase().startsWith(this.findTitle.toLowerCase()));
       return items.sort((a, b) => a.title > b.title);
+    },
+    currentUser() {
+      return this.$root.$data.user;
     }
   },
   created() {
@@ -149,5 +156,12 @@ textarea {
 button {
   margin: 5px 3px;
 
+}
+
+.find {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 10px;
 }
 </style>

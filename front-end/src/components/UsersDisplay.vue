@@ -20,6 +20,7 @@ export default {
     },
     computed: {
         currentUser() {
+            this.getUsers();
             return this.$root.$data.user;
         }
     },
@@ -91,14 +92,22 @@ export default {
 #users button {
     margin: 5px;
     padding: 3px;
-    font-size: 18px;
+    font-size: 20px;
+    border-radius: 10px;
+    border: 1px solid black;
 }
 
-.active {
-    border: 1px solid #ddd;
+#users .selected {
+
+    font-size: 1.3em;
+    padding: 5px;
 }
 
-.white .active {
+.white .selected {
     border: 2px solid white;
+}
+
+.user-display {
+    margin-top: 10px;
 }
 </style>

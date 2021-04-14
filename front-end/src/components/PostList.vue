@@ -11,7 +11,8 @@
         <div class="post" v-for="post in posts" :key="post.id" @click="selectPost(post)">
             <div class="info">
                 <h2>{{post.title}}</h2>
-                <p>Posted on {{post.date}}, at {{post.time}}</p>
+                <p>Posted on {{post.date}}, at {{post.time}} by
+                {{post.user.name}}</p>
             </div>
         </div>
     </div>
@@ -22,7 +23,8 @@
             <div class="postBody" v-for="para in foundItem.paragraphs" :key="para">
                 <p>{{para}}</p>
             </div>
-            <p>Posted on {{foundItem.date}}, at {{foundItem.time}}</p>
+            <p>Posted on {{foundItem.date}}, at {{foundItem.time}} by
+            {{foundItem.user.name}}</p>
         </div>
     </div>
 </div>
@@ -133,6 +135,10 @@ export default {
 
 .white {
   color: #fff;
+}
+
+img {
+    width: 100%;
 }
 
 </style>

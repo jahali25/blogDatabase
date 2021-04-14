@@ -39,4 +39,8 @@
 #nav a.router-link-exact-active {
   color: red;
 }
+
+.footer {
+  margin-top: 10px;
+}
 </style>
